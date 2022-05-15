@@ -32,14 +32,46 @@ var randColor = colors[Math.floor(Math.random() * colors.length)];*/
 // Puppeteer
 (async () => {
 
-  const Db =  require("./bootstrap/Db");
-  const db = new Db();
+  //const Db =  require("./bootstrap/Db");
+  //const db = new Db();
+
+  const mysql = require('mysql');
+  const connexionMysql = mysql.createConnection({
+    user: "user_name",
+    host: "host",
+    database: "database",
+    password : "password",
+    port: 'port'
+  })
+
+  connexionMysql.connect(function(err){
+    if(err) throw err;
+
+    //let sql = "CREATE TABLE cheesestest2(id INT, name varchar(20), price INT, name varchar(20))";
+    console.log("Base de données connectée mysql")
+
+    let sql = "CREATE TABLE cheesestest2(id INT, name varchar(20), price INT, description varchar(250), subtitle varchar(250), pound varchar(250), milk varchar(250), refining varchar(250), pate varchar(250), wine varchar(250), img varchar(250))";
+
+      /*connexionMysql.query(sql, function(err, result){
+          if(err) throw err;
+          console.log("Table created");
+      });*/
+    
+    /*let sql2 = "INSERT into cheesestest(name)values('Nat')";
+    connexionMysql.query(sql2, function(err, result){
+        if(err) throw err;
+        console.log("1 entrée");
+    });*/
+  })
+
+
+
  // db.client.query("CREATE TABLE cheeses ( id serial PRIMARY KEY, name TEXT NOT NULL, price INT NOT NULL, description TEXT NOT NULL, subtitle VARCHAR NOT NULL, pound VARCHAR NOT NULL, milk VARCHAR NOT NULL, refining VARCHAR NOT NULL, pate VARCHAR NOT NULL, wine VARCHAR NOT NULL, img VARCHAR NOT NULL)");
 
-  db.client.query("CREATE TABLE cheesestest (id INT ,name VARCHAR(250))", (err, res)=>{
+  /*db.client.query("CREATE TABLE cheesestest (id INT ,name VARCHAR(250))", (err, res)=>{
     //console.log(err, res)
     db.client.end
-  });
+  });*/
  
 
   //db.client.query("INSERT INTO cheeses (name, price, description, subtitle, pound, milk, refining, pate, wine  ) VALUES ('Test', 5, 'test description', 'short descr', '5grm', 'de vache', '1 an', 'molle', 'vin blanc' )");
@@ -104,12 +136,33 @@ var randColor = colors[Math.floor(Math.random() * colors.length)];*/
     cheese.push(results)
 
     //console.log('test', typeof cheese.name);
-    console.log(cheese)
+    //console.log(cheese)
 
     for(fromage of cheese){
 
+        const nameT = fromage.name;
+        let sql2 = `INSERT into cheesestest(name)values('${fromage.img}')`;
+        connexionMysql.query(`SELECT name FROM cheesestest WHERE name = "${fromage.img}"`), function(err, result, field){
+            if(result.length === 0){
+                connexionMysql.query(sql2, function(err, result){
+                    if(err) throw err;
+                    console.log("1 entrée");
+                });
+            }else{  
+                console.log("1 Existant");
+            }
+        }
+
+
+        //let sql2 = `INSERT into cheesestest(name)values('${fromage.name}')`;
+        //let sql3 = `INSERT INTO cheesestest2 ("name", "price", "description", "subtitle", "pound", "milk", "refining", "pate", "wine", "img"  ) VALUES ("${fromage.name}", "${fromage.price}", "${fromage.description}", "${fromage.subtitle}", "${fromage.pound}", "${fromage.milk}", "${fromage.refining}", "${fromage.pate}", "${fromage.wine}" , "${fromage.img}")`;
+
+        /*connexionMysql.query(sql2, function(err, result){
+            if(err) throw err;
+            console.log("1 entrée");
+        });*/
       //console.log('test name ici', fromage.name);
-      db.client.query(`INSERT INTO cheesesTest(name)values("${fromage.name}")`);
+      //db.client.query(`INSERT INTO cheesesTest(name)values("${fromage.name}")`);
       //db.client.query(`INSERT INTO cheeses ("name", "price", "description", "subtitle", "pound", "milk", "refining", "pate", "wine", "img"  ) VALUES ("${fromage.name}", "${fromage.price}", "${fromage.description}", "${fromage.subtitle}", "${fromage.pound}", "${fromage.milk}", "${fromage.refining}", "${fromage.pate}", "${fromage.wine}" , "${fromage.img}")`);
       //db.client.query("INSERT INTO cheeses (name, price, description, subtitle, pound, milk, refining, pate, wine, img  ) VALUES ('test', 5, 'dhjdhjjj', 'short descr', '5grm', 'de vache', '1 an', 'molle', 'vin blanc', 'url dhdhdfhdfhddfdh' )");
 
