@@ -1,13 +1,14 @@
+// If you want to create a separate db file
 const { Client } = require('pg')
 
 module.exports = class Db {
     constructor() {
       this.client = new Client({
-        user: "natanjourno",
-        host: "127.0.0.1",
-        database: "cheesebot_api",
-        password : "",
-        port: 5432
+        user: process.env.DB_USER,
+        host: process.env.DB_HOST,
+        database: process.env.DB_NAME,
+        password: process.env.DB_PASSWORD,
+        port: process.env.DB_PORT,
       });
       this.client.connect()
       console.log('Base de données connectée')
